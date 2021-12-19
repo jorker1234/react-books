@@ -1,57 +1,59 @@
 import React from "react";
+import { useForm } from "react-hook-form";
 
-class BookForm extends React.Component {
-  state = {
-    id: this.props.book?.id,
-    name: this.props.book?.name || "",
-    description: this.props.book?.description || "",
-    price: this.props.book?.price || "",
-  };
+const BookForm = (props) => {
+  const { register, handleSubmit, formState: {errors, isDirty} } = useForm({mode: 'onTouched'});
 
-  onSubmit = (e) => {
-    e.preventDefault();
-    this.props.onBookSubmit(this.state);
-  };
+  const renderErrorMessage = (name, type, message) => {
+    if(errors[name]?.type === type){
+      return <div className="invalid-feedback">{message}</div>;
+    }
+    return null;
+  }
 
-  render = () => {
-    return (
-      <div>
-        <form onSubmit={this.onSubmit}>
-          <div className="form-group mb-2">
-            <label>Name</label>
+  return (
+    <div>
+      <form onSubmit={handleSubmit(props.onBookSubmit)}>
+        <input type="hidden" defaultValue={props.book?.id} {...register("id")} />
+        <div className="form-group mb-2">
+            <label>Name <span style={{color:'red'}}>*</span></label>
             <input
               type="text"
-              className="form-control"
+              className={`form-control ${errors.name ? 'is-invalid': ''}`}
               placeholder="Enter name"
-              value={this.state.name}
-              onChange={(e) => this.setState({ name: e.target.value })}
+              defaultValue={props.book?.name}
+              {...register("name", {required: true, maxLength: 20})}
             />
+            {renderErrorMessage('name', 'required', 'Name is required.')}
+            {renderErrorMessage('name', 'maxLength', 'Name must less then 20 chareacters.')}
           </div>
-          <div className="form-group mb-2">
-            <label>Description</label>
-            <textarea
-              className="form-control"
-              rows="3"
-              value={this.state.description}
-              onChange={(e) => this.setState({ description: e.target.value })}
-            ></textarea>
-          </div>
-          <div className="form-group mb-2">
-            <label>Price</label>
-            <input
-              type="text"
-              className="form-control"
-              value={this.state.price}
-              onChange={(e) => this.setState({ price: e.target.value })}
-            />
-          </div>
-          <button type="submit" className="btn btn-primary">
-            Submit
-          </button>
-        </form>
-      </div>
-    );
-  };
-}
+        <div className="form-group mb-2">
+          <label>Description</label>
+          <textarea
+            className="form-control"
+            rows="3"
+            defaultValue={props.book?.description}
+              {...register("description")}
+          ></textarea>
+        </div>
+        <div className="form-group mb-2">
+          <label>Price <span style={{color:'red'}}>*</span></label>
+          <input
+            type="number"
+            className={`form-control ${errors.price ? 'is-invalid': ''}`}
+            defaultValue={props.book?.price}
+            {...register("price", {required: true, min: 1, max: 100000})}
+          />
+          {renderErrorMessage('price', 'required', 'Price is required.')}
+          {renderErrorMessage('price', 'min', 'Price is between 1-100000.')}
+          {renderErrorMessage('price', 'max', 'Price is between 1-100000.')}
+        </div>
+        <button type="submit" className="btn btn-primary" disabled={!isDirty}>
+          Submit
+        </button>
+      </form>
+    </div>
+  );
+};
 
 export default BookForm;

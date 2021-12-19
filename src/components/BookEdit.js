@@ -11,6 +11,7 @@ const BookEdit = () => {
   const book = get(id);
 
   const onBookSubmit = (book) => {
+    console.log(book);
     update(book);
     toastNotification.show();
     setTimeout(() => {
