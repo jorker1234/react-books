@@ -7,7 +7,7 @@ const ToastComponent = ({message}) => {
 
   useEffect(() => {
     toastNotification = new Toast(toastRef.current);
-  });
+  }, []);
 
   return (
     <div

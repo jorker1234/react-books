@@ -8,6 +8,8 @@ class BookList extends React.Component {
     books: list(),
   };
 
+  componentDidMount
+
     onBookDelete = (id) => {
         remove(id);
         toastNotification.show();

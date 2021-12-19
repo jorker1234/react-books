@@ -2,7 +2,8 @@ import React from "react";
 import { useForm } from "react-hook-form";
 
 const BookForm = (props) => {
-  const { register, handleSubmit, formState: {errors, isDirty} } = useForm({mode: 'onTouched'});
+  const { register, handleSubmit, formState: {errors, isDirty} } = useForm({mode: 'onTouched'}); 
+  // formState: {errors, isDirty}  => const errors = formState.errors; const isDirty = formState.isDirty;
 
   const renderErrorMessage = (name, type, message) => {
     if(errors[name]?.type === type){
