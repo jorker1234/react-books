@@ -1,27 +1,44 @@
-export const list = () => {
-    return JSON.parse(localStorage.getItem('books') || '[]');
+import axios from 'axios';
+
+const bookApi = axios.create({
+    baseURL: 'http://localhost:8100/apis/books/',
+});
+
+export const list = async () => {
+    const response = await bookApi.get();
+    return response.data;
 }
 
-export const get = (id) => {
-    return list().find(book => Number(book.id) === Number(id));
+export const get = async (id) => {
+    const response = await bookApi.get(null, {params: {id}});
+    return response.data;
+    
 }
 
-export const add = (book) => {
-    let id = 1;
-    const books = list();
-    if(books.length > 0) {
-        id = Number(books[books.length - 1].id) + 1;
+export const add = async (book) => {
+    try {
+        delete book.id;
+        const response = await bookApi.post(null, {...book});
+        return response.data.success;
+    }catch(error) {
+        return false;
     }
-    const newBooks = [...books, {...book, id}];
-    localStorage.setItem('books', JSON.stringify(newBooks));
 }
 
-export const update = (book) => {
-    const books = list().map(currentBook => Number(currentBook.id) === Number(book.id) ? book: currentBook);
-    localStorage.setItem('books', JSON.stringify(books));
+export const update = async (book) => {
+    try {
+        const response = await bookApi.put(null, {...book});
+        return response.data.success;
+    }catch(error) {
+        return false;
+    }
 }
 
-export const remove = (id) => {
-    const books = list().filter(book => Number(book.id) !== Number(id));
-    localStorage.setItem('books', JSON.stringify(books));
+export const remove = async (id) => {
+    try {
+        const response = await bookApi.delete(null, {params: {id}});
+        return response.data.success;
+    }catch(error) {
+        return false;
+    }
 }

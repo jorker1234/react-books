@@ -1,21 +1,32 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { list, remove } from "../apis/book";
-import { ToastComponent, toastNotification } from './Toast';
+import { ToastComponent, successNotification, errorNotification } from './Toast';
 
 class BookList extends React.Component {
   state = {
-    books: list(),
+    books: [],
   };
 
-  componentDidMount
+  componentDidMount = async () => {
+    await this.loadBooks();
+  }
 
-    onBookDelete = (id) => {
-        remove(id);
-        toastNotification.show();
-        this.setState({
-            books: list(),
-        })
+  loadBooks = async () => {
+    const books = await list();
+    this.setState({ books });
+  }
+
+    onBookDelete = async (id) => {
+        if(window.confirm('Are you sure you want to delete this book?')){
+          const success = await remove(id);
+          if(success) {
+            successNotification.show();
+            await this.loadBooks();
+          }else {
+            errorNotification.show();
+          }
+        }
     }
 
   renderBooks = () => {
@@ -56,7 +67,7 @@ class BookList extends React.Component {
           </thead>
           <tbody>{this.renderBooks()}</tbody>
         </table>
-        <ToastComponent message="Delete success."></ToastComponent>
+        <ToastComponent successMessage="Delete success." errorMessage="Something went wrong."></ToastComponent>
       </div>
     );
   };

@@ -1,26 +1,40 @@
 import React, { useRef, useEffect } from "react";
 import { Toast } from 'bootstrap'
 
-let toastNotification;
-const ToastComponent = ({message}) => {
-  const toastRef = useRef();
+let successNotification;
+let errorNotification;
+const ToastComponent = ({successMessage, errorMessage}) => {
+  const toastSuccessRef = useRef();
+  const toastErrorRef = useRef();
 
   useEffect(() => {
-    toastNotification = new Toast(toastRef.current);
+    successNotification = new Toast(toastSuccessRef.current);
+    errorNotification = new Toast(toastErrorRef.current);
   }, []);
 
   return (
-    <div
-      className="toast align-items-center text-white bg-success border-0 position-fixed bottom-0 end-0 m-2"
-      role="alert"
-      aria-live="assertive"
-      aria-atomic="true"
-      ref={toastRef}
-    >
-      <div className="toast-body">{message}</div>
+    <div>
+      <div
+        className="toast align-items-center text-white bg-success border-0 position-fixed bottom-0 end-0 m-2"
+        role="alert"
+        aria-live="assertive"
+        aria-atomic="true"
+        ref={toastSuccessRef}
+      >
+        <div className="toast-body">{successMessage}</div>
+      </div>
+      <div
+        className="toast align-items-center text-white bg-danger border-0 position-fixed bottom-0 end-0 m-2"
+        role="alert"
+        aria-live="assertive"
+        aria-atomic="true"
+        ref={toastErrorRef}
+      >
+        <div className="toast-body">{errorMessage}</div>
+      </div>
     </div>
   );
 };
 
-export { toastNotification, ToastComponent };
+export { successNotification, errorNotification, ToastComponent };
 
